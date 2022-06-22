@@ -1,0 +1,13 @@
+.button-wrapper{
+    float:right
+}
+.button{
+    margin-right: 1000px;
+}
+
+span{
+    display:inline-block;
+    width:100px;
+    height:40px;
+    line-height:40px;
+}
