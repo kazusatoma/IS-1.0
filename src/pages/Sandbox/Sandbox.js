@@ -44,7 +44,7 @@ export default function Sandbox() {
       <Content style={{ padding: '0 50px' }}>
         <MyRouters/>
       </Content>
-      <Footer style={{ textAlign: 'center',height: '125px'}}>Issue tracker 1.0</Footer>
+      <Footer style={{ textAlign: 'center',height: 'auto'}}>Issue tracker 1.0</Footer>
     </Layout>
   )
 };
