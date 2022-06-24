@@ -29,7 +29,7 @@ export default function ProjectDetails() {
 
     const handleDelete = (item) => {
         setSwitch(!mySwitch)
-        axios.delete(`http://localhost:5000/it_projects/${myData[0].id}`).then(
+        axios.delete(`http://localhost:5000/it_people/${myData[0].id}`).then(
             setData(myData.filter(data => data.id !== myData[0].id))).catch
             (err => {
                 console.log(err)
@@ -88,7 +88,7 @@ export default function ProjectDetails() {
 
     return (
         <div>
-            {mySwitch ? <Navigate to="/home/projects" /> :
+            {mySwitch ? <Navigate to="/home/users" /> :
                 <div>
                     <Descriptions layout="vertical" bordered column={2}>
                         <Descriptions.Item label="User's ID">{myData[0] ? myData[0].id : <Spin />}</Descriptions.Item>

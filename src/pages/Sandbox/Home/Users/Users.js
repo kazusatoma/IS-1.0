@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-import { Form, Input, Button, Modal, Table, DatePicker, Space,Tag } from 'antd';
+import { Form, Input, Button, Modal, Table, Select, Space} from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
@@ -8,9 +8,12 @@ import { Link } from 'react-router-dom';
 export default function Users() {
   const [form] = Form.useForm();
   const [datasource, setDatasource] = useState([]);
+  const [myProject, setProject] = useState([''])
   const [visible, setVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
+  const { Option } = Select;
+  const roleList = ["Manager", "Project lead", "Member"]
   // const [myFilter,setMyFilter] = useState([]);
   const searchInput = useRef(null);
 
@@ -104,7 +107,7 @@ export default function Users() {
     {
       title: 'User ID',
       dataIndex: 'id',
-      width:'18%',
+      width: '18%',
       ...getColumnSearchProps('id'),
       render: (item) => {
         return <Link style={{ color: 'black' }} to={"UserInfo"} state={item}>{item}</Link>
@@ -146,6 +149,11 @@ export default function Users() {
         // setMyFilter(tempList)
       }
     )
+    axios.get(`http://localhost:5000/it_projects`).then(
+      res => {
+        setProject(res.data)
+      }
+    )
   }, [])
 
   const showModal = () => {
@@ -154,7 +162,7 @@ export default function Users() {
 
   const onCreate = (values) => {
     var date = new Date();
-    axios.post(`http://localhost:5000/it_issue`, {
+    axios.post(`http://localhost:5000/it_people`, {
       "person_name": values.person_name,
       "person_email": values.person_email,
       "person_role": values.person_role,
@@ -200,7 +208,7 @@ export default function Users() {
   return (
     <div>
       <Button style={{ margin: 10 }} onClick={showModal}>Add User</Button>
-      <Table style={{ margin: '0px 10px'}} dataSource={datasource} columns={columns} rowKey="id"></Table>
+      <Table style={{ margin: '0px 10px' }} dataSource={datasource} columns={columns} rowKey="id"></Table>
       <Modal
         visible={visible}
         title="Create a new user"
@@ -233,7 +241,15 @@ export default function Users() {
             name="person_role"
             label="person_role"
           >
-            <Input allowClear />
+            <Select
+              style={{
+                width: 120,
+              }}
+            >
+              {roleList.map((role) => {
+                return <Option key={roleList.indexOf(role)} value={role}>{role}</Option>
+              })}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -254,7 +270,15 @@ export default function Users() {
             name="assigned_project"
             label="assigned_project"
           >
-            <Input allowClear />
+            <Select
+              style={{
+                width: 120,
+              }}
+            >
+              {myProject.map((item) => {
+                return <Option key={myProject.indexOf(item)} value={item.id}>{item.id}</Option>
+              })}
+            </Select>
           </Form.Item>
 
         </Form>

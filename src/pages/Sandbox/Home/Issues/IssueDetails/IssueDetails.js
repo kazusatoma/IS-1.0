@@ -1,4 +1,4 @@
-import { Tag, Descriptions, Button, Modal, DatePicker, Form, Input, Spin } from 'antd';
+import { Tag, Descriptions, Button, Modal, DatePicker, Form, Input, Spin, Select, Switch } from 'antd';
 import React, { useState, useEffect } from 'react'
 import { useLocation, Navigate } from 'react-router-dom';
 import axios from 'axios'
@@ -6,14 +6,27 @@ import axios from 'axios'
 export default function IssueDetails() {
     const myProps = useLocation();
     const [myData, setData] = useState(['']);
+    const [myProject, setProject] = useState([]);
+    const [myUsers, setUsers] = useState([]);
     const [mySwitch, setSwitch] = useState(false);
     const [form] = Form.useForm();
+    const { Option } = Select;
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         axios.get(`http://localhost:5000/it_issue?id=${myProps.state}`).then(
             res => {
                 setData(res.data)
+            }
+        )
+        axios.get(`http://localhost:5000/it_projects`).then(
+            res => {
+                setProject(res.data)
+            }
+        )
+        axios.get(`http://localhost:5000/it_people`).then(
+            res => {
+                setUsers(res.data)
             }
         )
     }, [myProps.state])
@@ -40,7 +53,7 @@ export default function IssueDetails() {
             "identified_date": values.identified_date,
             "related_project": values.related_project,
             "assigned_to": values.assigned_to,
-            "status": "OPEN",
+            "status": values.status,
             "priority": values.priority,
             "target_resolution_date": values.target_resolution_date,
             "progress": values.progress,
@@ -82,7 +95,8 @@ export default function IssueDetails() {
             assigned_to: myData[0].assigned_to,
             priority: myData[0].assigned_to,
             progress: myData[0].progress,
-            resolution_summary: myData[0].resolution_summary
+            resolution_summary: myData[0].resolution_summary,
+            status:myData[0].status
         })
     }
 
@@ -90,8 +104,9 @@ export default function IssueDetails() {
 
     return (
         <div>
-            {mySwitch ? <Navigate to="/issue/issueDetails" /> :
+            {mySwitch ? <Navigate to="/home/issue" /> :
                 <div>
+                    {console.log(myProject, myUsers)}
                     <Descriptions layout="vertical" bordered column={2}>
                         <Descriptions.Item label="Issue ID">{myData[0] ? myData[0].id : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Issue summary" span={1}>{myData[0] ? myData[0].issue_summary : <Spin />}</Descriptions.Item>
@@ -103,15 +118,15 @@ export default function IssueDetails() {
                         <Descriptions.Item label="Progress">{myData[0] ? myData[0].progress : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Priority">{myData[0] ? myData[0].priority : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Target resolution date">{myData[0] ? myData[0].target_resolution_date : <Spin />}</Descriptions.Item>
-                        <Descriptions.Item label="Status">
-                            {myData[0].status === 'OPEN' ? <Tag color="green">{myData[0].status}</Tag> : <Tag color="red">{myData[0].status}</Tag>}
-                        </Descriptions.Item>
                         <Descriptions.Item label="Actual resolution date">{myData[0] ? myData[0].actual_resolution_date : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Resolution summary">{myData[0] ? myData[0].resolution_summary : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Created on">{myData[0] ? myData[0].created_on : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Created by">{myData[0] ? myData[0].created_by : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Modified on">{myData[0] ? myData[0].modified_on : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Modified by">{myData[0] ? myData[0].modified_by : <Spin />}</Descriptions.Item>
+                        <Descriptions.Item label="Status">
+                            {myData[0].status === 'OPEN' ? <Tag color="green">{myData[0].status}</Tag> : <Tag color="red">{myData[0].status}</Tag>}
+                        </Descriptions.Item>
                     </Descriptions>
                     <Button style={{ margin: 10 }} onClick={handleClick}>Edit</Button>
                     <Button danger onClick={() => handleDelete()}>delete</Button>
@@ -162,14 +177,30 @@ export default function IssueDetails() {
                                 name="related_project"
                                 label="Related project"
                             >
-                                <Input allowClear />
+                                <Select
+                                    style={{
+                                        width: 120,
+                                    }}
+                                >
+                                    {myProject.map((item) => {
+                                        return <Option key={myProject.indexOf(item)} value={item.id}>{item.id}</Option>
+                                    })}
+                                </Select>
                             </Form.Item>
 
                             <Form.Item
                                 name="assigned_to"
                                 label="Assigned to"
                             >
-                                <Input allowClear />
+                                <Select
+                                    style={{
+                                        width: 120,
+                                    }}
+                                >
+                                    {myUsers.map((item) => {
+                                        return <Option key={myUsers.indexOf(item)} value={item.id}>{item.id}</Option>
+                                    })}
+                                </Select>
                             </Form.Item>
 
                             <Form.Item
@@ -206,6 +237,20 @@ export default function IssueDetails() {
                                 label="Resolution summary"
                             >
                                 <Input allowClear />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="status"
+                                label="Status"
+                            >
+                                <Select
+                                    style={{
+                                        width: 120,
+                                    }}
+                                >
+                                    <Option value="OPEN">OPEN</Option>
+                                    <Option value="CLOSED">CLOSED</Option>
+                                </Select>
                             </Form.Item>
                         </Form>
                     </Modal>

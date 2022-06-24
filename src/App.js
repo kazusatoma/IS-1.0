@@ -1,15 +1,19 @@
 import React from "react";
 import Sandbox from "./pages/Sandbox/Sandbox";
 import Login from "./pages/Login/Login"
-import {BrowserRouter,Routes,Route} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./components/ProtectedRoute/ProtectedRoute";
 
 export default function App() {
   return (
-  <BrowserRouter>
+    <BrowserRouter>
       <Routes>
-          <Route path="/login" element={<Login/>}/>
-          <Route path="*" element={<Sandbox/>}/>
+        <Route path="*" element={
+          <ProtectedRoute>
+            <Sandbox />
+          </ProtectedRoute>} />
+        <Route path="/login" element={<Login />} />
       </Routes>
-  </BrowserRouter>
+    </BrowserRouter>
   );
 }
