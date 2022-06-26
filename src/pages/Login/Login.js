@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Form, Input, message } from 'antd'
-import { Link,useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Login.css'
 import axios from 'axios';
 
@@ -8,14 +8,9 @@ export default function Login() {
 
   const navigate = useNavigate()
 
-  const handleClick = () => {
-    <Link to="/home" replace></Link>
-  }
-
   const onFinish = (values) => {
     axios.get(`http://localhost:5000/it_people?username=${values.username}&password=${values.password}`).then(
       res => {
-        console.log(res.data)
         if (res.data.length > 0){
           localStorage.setItem("token", JSON.stringify(res.data[0]))
           navigate("/home")
@@ -67,7 +62,7 @@ export default function Login() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" onClick={handleClick}>Login</Button>
+            <Button type="primary" htmlType="submit">Login</Button>
           </Form.Item>
         </Form>
       </div>

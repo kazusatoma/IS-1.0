@@ -2,13 +2,3 @@
     color:#fff;
     font-size: 30px;
 }
-
-.headerButton{
-    float:right;
-    position: relative;
-    bottom: 0.1rem;
-    top:31px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-}

@@ -11,6 +11,7 @@ export default function Projects() {
   const [visible, setVisible] = useState(false)
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
+  const [checkRole, setRole] = useState()
   const searchInput = useRef(null);
 
 
@@ -116,22 +117,21 @@ export default function Projects() {
       ...getColumnSearchProps('project_name'),
     },
     {
-      title: 'Created by',
-      dataIndex: 'created_by',
-      ...getColumnSearchProps('created_by'),
+      title: 'Start date',
+      dataIndex: 'start_date',
     },
     {
-      title: 'Modified by',
-      dataIndex: 'modified_by',
+      title: 'Target end date',
+      dataIndex:'target_end_date',
     },
     {
-      title: 'Created on',
-      dataIndex: 'created_on',
+      title: 'Actual end date',
+      dataIndex: 'actual_end_date',
     },
     {
       title: 'Action',
       render: (item) => {
-        return <Button danger onClick={() => handleDelete(item)}>delete</Button>
+        return <Button danger onClick={() => handleDelete(item)} disabled={!checkRole}>delete</Button>
       }
     }
   ]
@@ -141,6 +141,7 @@ export default function Projects() {
     axios.get(" http://localhost:5000/it_projects").then(
       res => {
         setDatasource(res.data)
+        setRole(JSON.parse(localStorage.getItem("token")).person_role === "Manager")
       }
     )
   }, [])
@@ -155,11 +156,11 @@ export default function Projects() {
       "project_name": values.project_name,
       "start_date": values.start_date,
       "target_end_date": "",
-      "actual_end_id": "",
+      "actual_end_date": "",
       "created_on": date,
-      "created_by": "Yunqi li",
-      "modified_on": "2014-01-01T23:28:56.782Z",
-      "modified_by": "Yunqi Wang"
+      "created_by": JSON.parse(localStorage.getItem("token")).person_name,
+      "modified_on": "",
+      "modified_by": ""
     }).then(
       res => {
         setDatasource([...datasource, res.data])
@@ -194,7 +195,7 @@ export default function Projects() {
 
   return (
     <div>
-      <Button style={{ margin: 10 }} onClick={showModal}>Add Project</Button>
+      <Button style={{ margin: 10 }} onClick={showModal} disabled={!checkRole}>Add Project</Button>
       <Table style={{ margin: '0px 10px'}} dataSource={datasource} columns={columns} rowKey="id"></Table>
       <Modal
         visible={visible}
@@ -226,6 +227,12 @@ export default function Projects() {
           <Form.Item
             name="start_date"
             label="Start date"
+            rules={[
+              {
+                required: true,
+                message: 'Required',
+              },
+            ]}
           >
             <DatePicker />
           </Form.Item>

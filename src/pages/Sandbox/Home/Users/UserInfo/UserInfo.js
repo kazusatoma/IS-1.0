@@ -13,11 +13,14 @@ export default function ProjectDetails() {
     const [visible, setVisible] = useState(false);
     const { Option } = Select;
     const roleList = ["Manager", "Project lead", "Member"]
+    const [checkRole, setRole] = useState()
+    const [selectingRole, setSelectingRole] = useState()
 
     useEffect(() => {
         axios.get(`http://localhost:5000/it_people?id=${myProps.state}`).then(
             res => {
                 setData(res.data)
+                setRole(JSON.parse(localStorage.getItem("token")).person_role === "Manager")
             }
         )
         axios.get(`http://localhost:5000/it_projects`).then(
@@ -35,7 +38,7 @@ export default function ProjectDetails() {
                 console.log(err)
             })
     }
-    
+
     const handleClick = () => {
         showModal();
         form.setFieldsValue({
@@ -46,6 +49,7 @@ export default function ProjectDetails() {
             password: myData[0].password,
             assigned_project: myData[0].assigned_project,
         })
+        setSelectingRole(myData[0].person_role === "Manager"?true:false)
     }
 
     const showModal = () => {
@@ -61,10 +65,8 @@ export default function ProjectDetails() {
             "username": values.username,
             "password": values.password,
             "assigned_project": values.assigned_project,
-            "created_on": date,
-            "created_by": "",
             "modified_on": date,
-            "modified_by": ""
+            "modified_by": JSON.parse(localStorage.getItem("token")).person_name
         }).then(
             res => {
                 setData([res.data])
@@ -86,6 +88,16 @@ export default function ProjectDetails() {
             });
     }
 
+    const handleChange = (value) => {
+        setSelectingRole(value == "Manager")
+        if (value == "Manager") {
+            form.setFieldsValue({
+                assigned_project: "",
+            })
+        }
+    }
+
+
     return (
         <div>
             {mySwitch ? <Navigate to="/home/users" /> :
@@ -103,8 +115,8 @@ export default function ProjectDetails() {
                         <Descriptions.Item label="Modified on">{myData[0] ? myData[0].modified_on : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Modified by">{myData[0] ? myData[0].modified_by : <Spin />}</Descriptions.Item>
                     </Descriptions>
-                    <Button style={{ margin: 10 }} onClick={handleClick}>Edit</Button>
-                    <Button danger onClick={() => handleDelete()}>delete</Button>
+                    <Button style={{ margin: 10 }} onClick={handleClick} disabled={!checkRole}>Edit</Button>
+                    <Button danger onClick={() => handleDelete()} disabled={!checkRole}>delete</Button>
                     <Modal
                         visible={visible}
                         title="Edit this project"
@@ -122,6 +134,12 @@ export default function ProjectDetails() {
                             <Form.Item
                                 name="person_name"
                                 label="person_name"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
                                 <Input allowClear />
                             </Form.Item>
@@ -129,6 +147,12 @@ export default function ProjectDetails() {
                             <Form.Item
                                 name="person_email"
                                 label="person_email"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
                                 <Input allowClear />
                             </Form.Item>
@@ -136,11 +160,18 @@ export default function ProjectDetails() {
                             <Form.Item
                                 name="person_role"
                                 label="person_role"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
                                 <Select
                                     style={{
                                         width: 120,
                                     }}
+                                    onChange={(value) => handleChange(value)}
                                 >
                                     {roleList.map((role) => {
                                         return <Option key={roleList.indexOf(role)} value={role}>{role}</Option>
@@ -151,13 +182,25 @@ export default function ProjectDetails() {
                             <Form.Item
                                 name="username"
                                 label="username"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
-                                <Input allowClear/>
+                                <Input allowClear />
                             </Form.Item>
 
                             <Form.Item
                                 name="password"
                                 label="password"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
                                 <Input allowClear />
                             </Form.Item>
@@ -165,11 +208,18 @@ export default function ProjectDetails() {
                             <Form.Item
                                 name="assigned_project"
                                 label="assigned_project"
+                                rules={[
+                                    {
+                                        required: !selectingRole,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
                                 <Select
                                     style={{
                                         width: 120,
                                     }}
+                                    disabled={selectingRole}
                                 >
                                     {myProject.map((item) => {
                                         return <Option key={myProject.indexOf(item)} value={item.id}>{item.id}</Option>

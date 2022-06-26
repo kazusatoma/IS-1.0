@@ -106,7 +106,6 @@ export default function IssueDetails() {
         <div>
             {mySwitch ? <Navigate to="/home/issue" /> :
                 <div>
-                    {console.log(myProject, myUsers)}
                     <Descriptions layout="vertical" bordered column={2}>
                         <Descriptions.Item label="Issue ID">{myData[0] ? myData[0].id : <Spin />}</Descriptions.Item>
                         <Descriptions.Item label="Issue summary" span={1}>{myData[0] ? myData[0].issue_summary : <Spin />}</Descriptions.Item>

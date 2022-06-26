@@ -10,11 +10,13 @@ export default function ProjectDetails() {
   const [mySwitch, setSwitch] = useState(false);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
+  const [checkRole, setRole] = useState();
 
   useEffect(() => {
     axios.get(`http://localhost:5000/it_projects?id=${myProps.state}`).then(
       res => {
         setData(res.data)
+        setRole(JSON.parse(localStorage.getItem("token")).person_role === "Manager")
       }
     )
   }, [myProps.state])
@@ -38,10 +40,9 @@ export default function ProjectDetails() {
       "project_name": values.project_name,
       "start_date": values.start_date,
       "target_end_date": values.target_end_date,
-      "actual_end_id": "",
-      "created_by": "Yunqi li",
+      "actual_end_date": values.actual_end_date,
       "modified_on": date,
-      "modified_by": "Yunqi Wang"
+      "modified_by": JSON.parse(localStorage.getItem("token")).person_name
     }).then(
       res => {
         setData([res.data])
@@ -77,16 +78,16 @@ export default function ProjectDetails() {
           <Descriptions layout="vertical" bordered column={2}>
             <Descriptions.Item label="Project ID">{myData[0] ? myData[0].id : <Spin />}</Descriptions.Item>
             <Descriptions.Item label="Project name">{myData[0] ? myData[0].project_name : <Spin />}</Descriptions.Item>
-            <Descriptions.Item label="Actual end ID">{myData[0] ? myData[0].actual_end_id : <Spin />}</Descriptions.Item>
             <Descriptions.Item label="Created on">{myData[0] ? myData[0].created_on : <Spin />}</Descriptions.Item>
             <Descriptions.Item label="Created by">{myData[0] ? myData[0].created_by : <Spin />}</Descriptions.Item>
-            <Descriptions.Item label="Modified by">{myData[0] ? myData[0].modified_by : <Spin />}</Descriptions.Item>
-            <Descriptions.Item label="Modified on">{myData[0] ? myData[0].modified_on : <Spin />}</Descriptions.Item>
             <Descriptions.Item label="Start date">{myData[0] ? myData[0].start_date : <Spin />}</Descriptions.Item>
             <Descriptions.Item label="Target end date">{myData[0] ? myData[0].target_end_date : <Spin />}</Descriptions.Item>
+            <Descriptions.Item label="Actual end date">{myData[0] ? myData[0].actual_end_date : <Spin />}</Descriptions.Item>
+            <Descriptions.Item label="Modified by">{myData[0] ? myData[0].modified_by : <Spin />}</Descriptions.Item>
+            <Descriptions.Item label="Modified on">{myData[0] ? myData[0].modified_on : <Spin />}</Descriptions.Item>
           </Descriptions>
-          <Button style={{ margin: 10 }} onClick={handleClick}>Edit</Button>
-          <Button danger onClick={() => handleDelete()}>delete</Button>
+          <Button style={{ margin: 10 }} onClick={handleClick} disabled={!checkRole}>Edit</Button>
+          <Button danger onClick={() => handleDelete()} disabled={!checkRole}>delete</Button>
           <Modal
             visible={visible}
             title="Edit this project"
@@ -107,7 +108,7 @@ export default function ProjectDetails() {
                 rules={[
                   {
                     required: true,
-                    message: 'Please input the title of collection!',
+                    message: 'Required',
                   },
                 ]}
               >
@@ -117,12 +118,31 @@ export default function ProjectDetails() {
               <Form.Item
                 name="start_date"
                 label="Start date"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Required',
+                  },
+                ]}
               >
                 <DatePicker />
               </Form.Item>
               <Form.Item
                 name="target_end_date"
                 label="Target end date"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Required',
+                  },
+                ]}
+              >
+                <DatePicker />
+              </Form.Item>
+
+              <Form.Item
+                name="actual_end_date"
+                label="Actual end date"
               >
                 <DatePicker />
               </Form.Item>

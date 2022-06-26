@@ -14,6 +14,8 @@ export default function Users() {
   const [searchedColumn, setSearchedColumn] = useState('');
   const { Option } = Select;
   const roleList = ["Manager", "Project lead", "Member"]
+  const [checkRole , setRole] = useState()
+  const [selectingRole, setSelectingRole] = useState(false)
   // const [myFilter,setMyFilter] = useState([]);
   const searchInput = useRef(null);
 
@@ -130,7 +132,7 @@ export default function Users() {
     {
       title: 'Action',
       render: (item) => {
-        return <Button danger onClick={() => handleDelete(item)}>delete</Button>
+        return <Button danger onClick={() => handleDelete(item)} disabled={!checkRole}>delete</Button>
       }
     }
   ]
@@ -147,6 +149,7 @@ export default function Users() {
         //   })
         // })
         // setMyFilter(tempList)
+        setRole(JSON.parse(localStorage.getItem("token")).person_role==="Manager")
       }
     )
     axios.get(`http://localhost:5000/it_projects`).then(
@@ -170,7 +173,7 @@ export default function Users() {
       "password": values.password,
       "assigned_project": values.assigned_project,
       "created_on": date,
-      "created_by": "",
+      "created_by": JSON.parse(localStorage.getItem("token")).person_name,
       "modified_on": date,
       "modified_by": ""
     }).then(
@@ -196,18 +199,24 @@ export default function Users() {
 
 
   const handleDelete = (item) => {
-    axios.delete(`http://localhost:5000/it_issue/${item.id}`).then(
+    axios.delete(`http://localhost:5000/it_people/${item.id}`).then(
       setDatasource(datasource.filter(data => data.id !== item.id))).catch
       (err => {
         console.log(err)
       })
   }
 
+  const handleChange = (value) => {
+    setSelectingRole(value == "Manager")
+    form.setFieldsValue({
+      assigned_project: "",
+  })
+  }
 
 
   return (
     <div>
-      <Button style={{ margin: 10 }} onClick={showModal}>Add User</Button>
+      <Button style={{ margin: 10 }} onClick={showModal} disabled={!checkRole}>Add User</Button>
       <Table style={{ margin: '0px 10px' }} dataSource={datasource} columns={columns} rowKey="id"></Table>
       <Modal
         visible={visible}
@@ -226,6 +235,12 @@ export default function Users() {
           <Form.Item
             name="person_name"
             label="person_name"
+            rules={[
+              {
+                required: true,
+                message: 'Required',
+              },
+            ]}
           >
             <Input allowClear />
           </Form.Item>
@@ -233,6 +248,12 @@ export default function Users() {
           <Form.Item
             name="person_email"
             label="person_email"
+            rules={[
+              {
+                required: true,
+                message: 'Required',
+              },
+            ]}
           >
             <Input allowClear />
           </Form.Item>
@@ -240,11 +261,18 @@ export default function Users() {
           <Form.Item
             name="person_role"
             label="person_role"
+            rules={[
+              {
+                required: true,
+                message: 'Required',
+              },
+            ]}
           >
             <Select
               style={{
                 width: 120,
               }}
+              onChange={(value) => handleChange(value)}
             >
               {roleList.map((role) => {
                 return <Option key={roleList.indexOf(role)} value={role}>{role}</Option>
@@ -255,6 +283,12 @@ export default function Users() {
           <Form.Item
             name="username"
             label="username"
+            rules={[
+              {
+                required: true,
+                message: 'Required',
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -269,11 +303,18 @@ export default function Users() {
           <Form.Item
             name="assigned_project"
             label="assigned_project"
+            rules={[
+              {
+                required: !selectingRole,
+                message: 'Required',
+              },
+            ]}
           >
             <Select
               style={{
                 width: 120,
               }}
+              disabled = {selectingRole}
             >
               {myProject.map((item) => {
                 return <Option key={myProject.indexOf(item)} value={item.id}>{item.id}</Option>
