@@ -14,7 +14,6 @@ export default function Projects() {
   const [checkRole, setRole] = useState()
   const searchInput = useRef(null);
 
-
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div
@@ -160,7 +159,7 @@ export default function Projects() {
       "created_on": date,
       "created_by": JSON.parse(localStorage.getItem("token")).person_name,
       "modified_on": "",
-      "modified_by": ""
+      "modified_by": "",
     }).then(
       res => {
         setDatasource([...datasource, res.data])

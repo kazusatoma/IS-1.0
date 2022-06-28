@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-import { Form, Input, Button, Modal, Table, DatePicker, Space,Tag } from 'antd';
+import { Form, Input, Button, Modal, Table, DatePicker, Space, Tag, Select } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
@@ -11,8 +11,21 @@ export default function Issues() {
   const [visible, setVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
-  const [myFilter,setMyFilter] = useState([]);
+  const [myFilter, setMyFilter] = useState([]);
+  const [myProject, setProject] = useState([]);
+  const [myUsers, setUsers] = useState([]);
+  const { Option } = Select;
   const searchInput = useRef(null);
+  const colorList = [
+    {project: 1,color: "red"},
+    {project: 2,color: "orange"},
+    {project: 3,color: "yellow"},
+    {project: 4,color: "green"},
+    {project: 5,color: "azure"},
+    {project: 6,color: "blue"},
+    {project: 7,color: "purple"},
+  ]
+
 
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -104,7 +117,7 @@ export default function Issues() {
     {
       title: 'Issue ID',
       dataIndex: 'id',
-      width:'18%',
+      width: '18%',
       ...getColumnSearchProps('id'),
       render: (item) => {
         return <Link style={{ color: 'black' }} to={"issueDetails"} state={item}>{item}</Link>
@@ -114,7 +127,7 @@ export default function Issues() {
       title: 'Related project',
       dataIndex: 'related_project',
       filters: myFilter,
-      onFilter: (value, record) => {return record.related_project === value},
+      onFilter: (value, record) => { return record.related_project === value },
     },
     {
       title: 'Modified date',
@@ -135,7 +148,7 @@ export default function Issues() {
       ],
       onFilter: (value, record) => record.status.indexOf(value) === 0,
       render: (item) => {
-        return item==='OPEN'?<Tag color="green">{item}</Tag>:<Tag color="red">{item}</Tag>
+        return item === 'OPEN' ? <Tag color="green">{item}</Tag> : <Tag color="red">{item}</Tag>
       }
     },
     {
@@ -152,12 +165,24 @@ export default function Issues() {
         setDatasource(res.data)
         let tempList = []
         res.data.map((item) => {
-          return tempList.push({
-            text:item.related_project,
-            value:item.related_project,
-          })
+          if (!checkDuplicate(tempList, item)) {
+            return tempList.push({
+              text: item.related_project,
+              value: item.related_project,
+            })
+          }
         })
         setMyFilter(tempList)
+      }
+    )
+    axios.get(`http://localhost:5000/it_people`).then(
+      res => {
+        setUsers(res.data)
+      }
+    )
+    axios.get(`http://localhost:5000/it_projects`).then(
+      res => {
+        setProject(res.data)
       }
     )
   }, [])
@@ -168,6 +193,10 @@ export default function Issues() {
 
   const onCreate = (values) => {
     var date = new Date();
+    var mycolor = colorList.filter((item)=>{
+      return item.project === values.related_project
+    })
+    console.log(mycolor)
     axios.post(`http://localhost:5000/it_issue`, {
       "issue_summary": values.issue_summary,
       "issue_description": values.issue_description,
@@ -184,7 +213,8 @@ export default function Issues() {
       "created_on": date,
       "created_by": "Yunqi Wang",
       "modified_on": date,
-      "modified_by": "Yunqi Wang"
+      "modified_by": "Yunqi Wang",
+      "color" : mycolor[0].color
     }).then(
       res => {
         setDatasource([...datasource, res.data])
@@ -215,12 +245,28 @@ export default function Issues() {
       })
   }
 
+  const checkDuplicate = (array, item) => {
+    let flag = false
+    array.forEach(element => {
+      if (element.text === item.related_project){
+        flag = true
+      }
+    });
+    return flag
+  }
+
+  const findcolor = (id) => {
+    colorList.map((color) => {
+
+    })
+  }
+
 
 
   return (
     <div>
       <Button style={{ margin: 10 }} onClick={showModal}>Add issue</Button>
-      <Table style={{ margin: '0px 10px'}} dataSource={datasource} columns={columns} rowKey="id"></Table>
+      <Table style={{ margin: '0px 10px' }} dataSource={datasource} columns={columns} rowKey="id"></Table>
       <Modal
         visible={visible}
         title="Create a new issue"
@@ -267,14 +313,30 @@ export default function Issues() {
             name="related_project"
             label="related_project"
           >
-            <Input allowClear />
+            <Select
+              style={{
+                width: 120,
+              }}
+            >
+              {myProject.map((item) => {
+                return <Option key={myProject.indexOf(item)} value={item.id}>{item.id}</Option>
+              })}
+            </Select>
           </Form.Item>
 
           <Form.Item
             name="assigned_to"
             label="assigned_to"
           >
-            <Input allowClear />
+            <Select
+              style={{
+                width: 120,
+              }}
+            >
+              {myUsers.map((item) => {
+                return <Option key={myUsers.indexOf(item)} value={item.id}>{item.id}</Option>
+              })}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -283,7 +345,7 @@ export default function Issues() {
           >
             <Input allowClear />
           </Form.Item>
-          
+
           <Form.Item
             name="progress"
             label="progress"
@@ -310,7 +372,7 @@ export default function Issues() {
             name="resolution_summary"
             label="resolution_summary"
           >
-            <Input.TextArea allowClear/>
+            <Input.TextArea allowClear />
           </Form.Item>
 
         </Form>

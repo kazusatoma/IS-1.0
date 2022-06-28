@@ -1,0 +1,15 @@
+.site-layout-content{
+    position: relative;
+}
+
+
+.site-card-wrapper{
+    padding: 50px;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.ant-row{
+    height: 100%;
+}

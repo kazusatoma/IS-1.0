@@ -1,6 +1,7 @@
-import { Tag, Descriptions, Button, Modal, DatePicker, Form, Input, Spin, Select, Switch } from 'antd';
+import { Tag, Descriptions, Button, Modal, DatePicker, Form, Input, Spin, Select,} from 'antd';
 import React, { useState, useEffect } from 'react'
 import { useLocation, Navigate } from 'react-router-dom';
+import moment from 'moment'
 import axios from 'axios'
 
 export default function IssueDetails() {
@@ -12,11 +13,22 @@ export default function IssueDetails() {
     const [form] = Form.useForm();
     const { Option } = Select;
     const [visible, setVisible] = useState(false);
+    const [Role, setRole] = useState();
+    const colorList = [
+        {project: 1,color: "red"},
+        {project: 2,color: "orange"},
+        {project: 3,color: "yellow"},
+        {project: 4,color: "green"},
+        {project: 5,color: "azure"},
+        {project: 6,color: "blue"},
+        {project: 7,color: "purple"},
+      ]
 
     useEffect(() => {
         axios.get(`http://localhost:5000/it_issue?id=${myProps.state}`).then(
             res => {
                 setData(res.data)
+                setRole(JSON.parse(localStorage.getItem("token")).person_role)
             }
         )
         axios.get(`http://localhost:5000/it_projects`).then(
@@ -46,6 +58,9 @@ export default function IssueDetails() {
 
     const onCreate = (values) => {
         var date = new Date();
+        var mycolor = colorList.filter((item)=>{
+            return item.project === values.related_project
+        })
         axios.patch(`http://localhost:5000/it_issue/${myData[0].id}`, {
             "issue_summary": values.issue_summary,
             "issue_description": values.issue_description,
@@ -62,7 +77,8 @@ export default function IssueDetails() {
             "created_on": date,
             "created_by": "Yunqi Wang",
             "modified_on": date,
-            "modified_by": "Yunqi Wang"
+            "modified_by": "Yunqi Wang",
+            "color" : mycolor[0].color
         }).then(
             res => {
                 setData([res.data])
@@ -91,6 +107,9 @@ export default function IssueDetails() {
             issue_summary: myData[0].issue_summary,
             issue_description: myData[0].issue_description,
             identified_by_person_id: myData[0].identified_by_person_id,
+            identified_date:moment((myData[0].identified_date)),
+            target_resolution_date:moment((myData[0].target_resolution_date)),
+            actual_resolution_date:moment((myData[0].actual_resolution_date)),
             related_project: myData[0].related_project,
             assigned_to: myData[0].assigned_to,
             priority: myData[0].assigned_to,
@@ -99,7 +118,6 @@ export default function IssueDetails() {
             status:myData[0].status
         })
     }
-
 
 
     return (
@@ -127,8 +145,8 @@ export default function IssueDetails() {
                             {myData[0].status === 'OPEN' ? <Tag color="green">{myData[0].status}</Tag> : <Tag color="red">{myData[0].status}</Tag>}
                         </Descriptions.Item>
                     </Descriptions>
-                    <Button style={{ margin: 10 }} onClick={handleClick}>Edit</Button>
-                    <Button danger onClick={() => handleDelete()}>delete</Button>
+                    <Button style={{ margin: 10 }} onClick={handleClick} disabled={!((Role==="Project lead") ||(myData[0].assigned_to === JSON.parse(localStorage.getItem("token")).id))}>Edit</Button>
+                    <Button danger onClick={() => handleDelete()} disabled={!((Role==="Project lead") ||(myData[0].assigned_to === JSON.parse(localStorage.getItem("token")).id))}>delete</Button>
 
                     <Modal
                         visible={visible}
