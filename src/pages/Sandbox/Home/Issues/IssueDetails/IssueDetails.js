@@ -19,7 +19,7 @@ export default function IssueDetails() {
         { project: 2, color: "orange" },
         { project: 3, color: "yellow" },
         { project: 4, color: "green" },
-        { project: 5, color: "azure" },
+        { project: 5, color: "cyan" },
         { project: 6, color: "blue" },
         { project: 7, color: "purple" },
     ]

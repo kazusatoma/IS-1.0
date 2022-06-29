@@ -51,7 +51,7 @@ export default function Dashboard() {
         <Col span={6}>
           <Card title="Unassigned issues" style={{ height: "100%" }}>
             {myIssues.map((issue) => {
-              if ((!(issue.assigned_to === undefined)) && (issue.status === "OPEN")) {
+              if (((issue.assigned_to === undefined)) && (issue.status === "OPEN")) {
                 return <Popover
                   title={issue.id}
                   content={issue.issue_description}
