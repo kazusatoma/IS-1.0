@@ -2,6 +2,7 @@ import { Descriptions, Button, Modal, DatePicker, Form, Input, Spin } from 'antd
 import React, { useState, useEffect } from 'react'
 import { useLocation, Navigate } from 'react-router-dom';
 import axios from 'axios'
+import moment from 'moment'
 
 export default function ProjectDetails() {
 
@@ -67,7 +68,10 @@ export default function ProjectDetails() {
   const handleClick = () => {
     showModal();
     form.setFieldsValue({
-      project_name: myData[0].project_name
+      project_name: myData[0].project_name,
+      start_date:moment(myData[0].start_date),
+      target_end_date:moment(myData[0].target_end_date),
+      actual_end_date:moment(myData[0].actual_end_date)
     })
   }
 

@@ -17,13 +17,13 @@ export default function Issues() {
   const { Option } = Select;
   const searchInput = useRef(null);
   const colorList = [
-    {project: 1,color: "red"},
-    {project: 2,color: "orange"},
-    {project: 3,color: "yellow"},
-    {project: 4,color: "green"},
-    {project: 5,color: "azure"},
-    {project: 6,color: "blue"},
-    {project: 7,color: "purple"},
+    { project: 1, color: "red" },
+    { project: 2, color: "orange" },
+    { project: 3, color: "yellow" },
+    { project: 4, color: "green" },
+    { project: 5, color: "cyan" },
+    { project: 6, color: "blue" },
+    { project: 7, color: "purple" },
   ]
 
 
@@ -193,10 +193,9 @@ export default function Issues() {
 
   const onCreate = (values) => {
     var date = new Date();
-    var mycolor = colorList.filter((item)=>{
+    var mycolor = colorList.filter((item) => {
       return item.project === values.related_project
     })
-    console.log(mycolor)
     axios.post(`http://localhost:5000/it_issue`, {
       "issue_summary": values.issue_summary,
       "issue_description": values.issue_description,
@@ -211,10 +210,10 @@ export default function Issues() {
       "actual_resolution_date": values.actual_resolution_date,
       "resolution_summary": values.resolution_summary,
       "created_on": date,
-      "created_by": "Yunqi Wang",
+      "created_by": JSON.parse(localStorage.getItem("token")).person_name,
       "modified_on": date,
-      "modified_by": "Yunqi Wang",
-      "color" : mycolor[0].color
+      "modified_by": JSON.parse(localStorage.getItem("token")).person_name,
+      "color": mycolor[0].color
     }).then(
       res => {
         setDatasource([...datasource, res.data])
@@ -248,19 +247,12 @@ export default function Issues() {
   const checkDuplicate = (array, item) => {
     let flag = false
     array.forEach(element => {
-      if (element.text === item.related_project){
+      if (element.text === item.related_project) {
         flag = true
       }
     });
     return flag
   }
-
-  const findcolor = (id) => {
-    colorList.map((color) => {
-
-    })
-  }
-
 
 
   return (
@@ -282,29 +274,35 @@ export default function Issues() {
           layout="vertical"
         >
           <Form.Item
-            name="issue_summary"
-            label="Issue Summary"
-          >
-            <Input.TextArea allowClear />
-          </Form.Item>
-
-          <Form.Item
-            name="issue_description"
-            label="Issue Description"
-          >
-            <Input.TextArea allowClear />
-          </Form.Item>
-
-          <Form.Item
             name="identified_by_person_id"
             label="identified_by_person_id"
+            rules={[
+              {
+                required: true,
+                message: 'Required',
+              },
+            ]}
           >
-            <Input allowClear />
+            <Select
+              style={{
+                width: 120,
+              }}
+            >
+              {myUsers.map((item) => {
+                return <Option key={myUsers.indexOf(item)} value={item.id}>{item.id}</Option>
+              })}
+            </Select>
           </Form.Item>
 
           <Form.Item
             name="identified_date"
             label="identified_date"
+            rules={[
+              {
+                required: true,
+                message: 'Required',
+              },
+            ]}
           >
             <DatePicker />
           </Form.Item>
@@ -312,6 +310,12 @@ export default function Issues() {
           <Form.Item
             name="related_project"
             label="related_project"
+            rules={[
+              {
+                required: true,
+                message: 'Required',
+              },
+            ]}
           >
             <Select
               style={{
@@ -337,6 +341,20 @@ export default function Issues() {
                 return <Option key={myUsers.indexOf(item)} value={item.id}>{item.id}</Option>
               })}
             </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="issue_summary"
+            label="Issue Summary"
+          >
+            <Input.TextArea allowClear />
+          </Form.Item>
+
+          <Form.Item
+            name="issue_description"
+            label="Issue Description"
+          >
+            <Input.TextArea allowClear />
           </Form.Item>
 
           <Form.Item

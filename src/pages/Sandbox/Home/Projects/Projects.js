@@ -158,8 +158,8 @@ export default function Projects() {
       "actual_end_date": "",
       "created_on": date,
       "created_by": JSON.parse(localStorage.getItem("token")).person_name,
-      "modified_on": "",
-      "modified_by": "",
+      "modified_on": date,
+      "modified_by":  JSON.parse(localStorage.getItem("token")).person_name,
     }).then(
       res => {
         setDatasource([...datasource, res.data])

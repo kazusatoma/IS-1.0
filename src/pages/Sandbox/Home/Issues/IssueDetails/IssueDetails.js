@@ -1,4 +1,4 @@
-import { Tag, Descriptions, Button, Modal, DatePicker, Form, Input, Spin, Select,} from 'antd';
+import { Tag, Descriptions, Button, Modal, DatePicker, Form, Input, Spin, Select, } from 'antd';
 import React, { useState, useEffect } from 'react'
 import { useLocation, Navigate } from 'react-router-dom';
 import moment from 'moment'
@@ -15,14 +15,14 @@ export default function IssueDetails() {
     const [visible, setVisible] = useState(false);
     const [Role, setRole] = useState();
     const colorList = [
-        {project: 1,color: "red"},
-        {project: 2,color: "orange"},
-        {project: 3,color: "yellow"},
-        {project: 4,color: "green"},
-        {project: 5,color: "azure"},
-        {project: 6,color: "blue"},
-        {project: 7,color: "purple"},
-      ]
+        { project: 1, color: "red" },
+        { project: 2, color: "orange" },
+        { project: 3, color: "yellow" },
+        { project: 4, color: "green" },
+        { project: 5, color: "azure" },
+        { project: 6, color: "blue" },
+        { project: 7, color: "purple" },
+    ]
 
     useEffect(() => {
         axios.get(`http://localhost:5000/it_issue?id=${myProps.state}`).then(
@@ -58,7 +58,7 @@ export default function IssueDetails() {
 
     const onCreate = (values) => {
         var date = new Date();
-        var mycolor = colorList.filter((item)=>{
+        var mycolor = colorList.filter((item) => {
             return item.project === values.related_project
         })
         axios.patch(`http://localhost:5000/it_issue/${myData[0].id}`, {
@@ -74,11 +74,9 @@ export default function IssueDetails() {
             "progress": values.progress,
             "actual_resolution_date": values.actual_resolution_date,
             "resolution_summary": values.resolution_summary,
-            "created_on": date,
-            "created_by": "Yunqi Wang",
             "modified_on": date,
-            "modified_by": "Yunqi Wang",
-            "color" : mycolor[0].color
+            "modified_by": JSON.parse(localStorage.getItem("token")).person_name,
+            "color": mycolor[0].color
         }).then(
             res => {
                 setData([res.data])
@@ -107,15 +105,15 @@ export default function IssueDetails() {
             issue_summary: myData[0].issue_summary,
             issue_description: myData[0].issue_description,
             identified_by_person_id: myData[0].identified_by_person_id,
-            identified_date:moment((myData[0].identified_date)),
-            target_resolution_date:moment((myData[0].target_resolution_date)),
-            actual_resolution_date:moment((myData[0].actual_resolution_date)),
+            identified_date: moment((myData[0].identified_date)),
+            target_resolution_date: moment((myData[0].target_resolution_date)),
+            actual_resolution_date: moment((myData[0].actual_resolution_date)),
             related_project: myData[0].related_project,
             assigned_to: myData[0].assigned_to,
             priority: myData[0].assigned_to,
             progress: myData[0].progress,
             resolution_summary: myData[0].resolution_summary,
-            status:myData[0].status
+            status: myData[0].status
         })
     }
 
@@ -145,8 +143,8 @@ export default function IssueDetails() {
                             {myData[0].status === 'OPEN' ? <Tag color="green">{myData[0].status}</Tag> : <Tag color="red">{myData[0].status}</Tag>}
                         </Descriptions.Item>
                     </Descriptions>
-                    <Button style={{ margin: 10 }} onClick={handleClick} disabled={!((Role==="Project lead") ||(myData[0].assigned_to === JSON.parse(localStorage.getItem("token")).id))}>Edit</Button>
-                    <Button danger onClick={() => handleDelete()} disabled={!((Role==="Project lead") ||(myData[0].assigned_to === JSON.parse(localStorage.getItem("token")).id))}>delete</Button>
+                    <Button style={{ margin: 10 }} onClick={handleClick} disabled={!((Role === "Project lead") || (myData[0].assigned_to === JSON.parse(localStorage.getItem("token")).id))}>Edit</Button>
+                    <Button danger onClick={() => handleDelete()} disabled={!((Role === "Project lead") || (myData[0].assigned_to === JSON.parse(localStorage.getItem("token")).id))}>delete</Button>
 
                     <Modal
                         visible={visible}
@@ -162,30 +160,37 @@ export default function IssueDetails() {
                             form={form}
                             layout="vertical"
                         >
-                            <Form.Item
-                                name="issue_summary"
-                                label="Issue Summary"
-                            >
-                                <Input.TextArea showCount allowClear />
-                            </Form.Item>
-
-                            <Form.Item
-                                name="issue_description"
-                                label="Issue Description"
-                            >
-                                <Input.TextArea showCount allowClear />
-                            </Form.Item>
 
                             <Form.Item
                                 name="identified_by_person_id"
                                 label="Identified by person ID"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
-                                <Input allowClear />
+                                <Select
+                                    style={{
+                                        width: 120,
+                                    }}
+                                >
+                                    {myUsers.map((item) => {
+                                        return <Option key={myUsers.indexOf(item)} value={item.id}>{item.id}</Option>
+                                    })}
+                                </Select>
                             </Form.Item>
 
                             <Form.Item
                                 name="identified_date"
                                 label="Identified date"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
                                 <DatePicker />
                             </Form.Item>
@@ -193,6 +198,12 @@ export default function IssueDetails() {
                             <Form.Item
                                 name="related_project"
                                 label="Related project"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Required',
+                                    },
+                                ]}
                             >
                                 <Select
                                     style={{
@@ -218,6 +229,20 @@ export default function IssueDetails() {
                                         return <Option key={myUsers.indexOf(item)} value={item.id}>{item.id}</Option>
                                     })}
                                 </Select>
+                            </Form.Item>
+
+                            <Form.Item
+                                name="issue_summary"
+                                label="Issue Summary"
+                            >
+                                <Input.TextArea showCount allowClear />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="issue_description"
+                                label="Issue Description"
+                            >
+                                <Input.TextArea showCount allowClear />
                             </Form.Item>
 
                             <Form.Item

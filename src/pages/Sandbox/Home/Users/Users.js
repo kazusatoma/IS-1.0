@@ -175,7 +175,7 @@ export default function Users() {
       "created_on": date,
       "created_by": JSON.parse(localStorage.getItem("token")).person_name,
       "modified_on": date,
-      "modified_by": ""
+      "modified_by": JSON.parse(localStorage.getItem("token")).person_name
     }).then(
       res => {
         setDatasource([...datasource, res.data])
