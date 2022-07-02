@@ -34,7 +34,11 @@ const breadcrumbNameMap = {
   '/home/issue': 'Issues',
   '/home/issue/issueDetails': 'Issue details',
   '/home/users': 'Users',
-  '/home/users/UserInfo': 'User informations'
+  '/home/users/userInfo': 'User informations',
+  '/home/reports':'Report',
+  '/home/reports/issueSummary':'Issue summary',
+  '/home/reports/averageDaysResolve':'Average days to resolve',
+  '/home/reports/targetResolutionDates':'Target resolution dates',
 };
 
 export default function Sandbox() {
@@ -62,7 +66,7 @@ export default function Sandbox() {
       <TopHeader />
       <div className='breadcrumb'>
         <Breadcrumb style={{ margin: '10px', float: "left"}} separator=">">{breadcrumbItems}</Breadcrumb>
-        <Menu onClick={(value) => handleClick(value)} mode="horizontal" items={items} style={{ float: "right",width:350}} />
+        <Menu onClick={(value) => handleClick(value)} mode="horizontal" items={items} selectedKeys={""} style={{ float: "right",width:350}} />
       </div>
       <Content style={{ padding: '0 50px' }}>
         <MyRouters />

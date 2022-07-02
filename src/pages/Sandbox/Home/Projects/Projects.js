@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-import { Form, Input, Button, Modal, Table, DatePicker, Space,Spin } from 'antd';
+import { Form, Input, Button, Modal, Table, DatePicker, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { Link} from 'react-router-dom';
@@ -152,8 +152,8 @@ export default function Projects() {
   const onCreate = (values) => {
     var date = new Date();
     axios.post(`http://localhost:5000/it_projects`, {
-      "project_name": values.project_name,
-      "start_date": values.start_date,
+      "project_name": values.project_name?values.project_name:"",
+      "start_date": values.start_date?values.project_name:"",
       "target_end_date": "",
       "actual_end_date": "",
       "created_on": date,

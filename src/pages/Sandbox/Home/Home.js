@@ -61,6 +61,19 @@ export default function Home() {
                 <Meta title="Users"/>
             </Card>
         </Link>
+        <Link to='reports'>
+            <Card
+                hoverable
+                style={{
+                width: 240,
+                float:'left',
+                marginRight:'50px'
+                }}
+                cover={<img alt="reports" src="https://n.sinaimg.cn/sinakd20122/600/w1500h1500/20210602/5a3c-kquziik5972915.jpg" />}
+            >
+                <Meta title="Reports"/>
+            </Card>
+        </Link>
     </div>
   )
 }
