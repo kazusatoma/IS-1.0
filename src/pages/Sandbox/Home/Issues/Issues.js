@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { Form, Input, Button, Modal, Table, DatePicker, Space, Tag, Select } from 'antd';
+import moment from 'moment'
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
@@ -227,18 +228,18 @@ export default function Issues() {
       "issue_summary": values.issue_summary?values.issue_summary:"",
       "issue_description": values.issue_description?values.issue_description:"",
       "identified_by_person_id": values.identified_by_person_id?values.identified_by_person_id:"",
-      "identified_date": values.identified_date?values.identified_date:"",
+      "identified_date": values.identified_date?moment(values.identified_date):"",
       "related_project": values.related_project?values.related_project:"",
       "assigned_to": values.assigned_to?values.assigned_to:"",
       "status": "OPEN",
       "priority": values.priority?values.priority:"",
-      "target_resolution_date": values.target_resolution_date?values.target_resolution_date:"",
+      "target_resolution_date": values.target_resolution_date?moment(values.target_resolution_date):"",
       "progress": values.progress?values.progress:"",
-      "actual_resolution_date": values.actual_resolution_date?values.actual_resolution_date:"",
+      "actual_resolution_date": values.actual_resolution_date?moment(values.actual_resolution_date):"",
       "resolution_summary": values.resolution_summary?values.resolution_summary:"",
-      "created_on": date,
+      "created_on": moment(date),
       "created_by": JSON.parse(localStorage.getItem("token")).person_name,
-      "modified_on": date,
+      "modified_on": moment(date),
       "modified_by": JSON.parse(localStorage.getItem("token")).person_name,
       "color": mycolor[0].color?mycolor[0].color:"black"
     }).then(

@@ -39,10 +39,10 @@ export default function ProjectDetails() {
     var date = new Date();
     axios.patch(`http://localhost:5000/it_projects/${myData[0].id}`, {
       "project_name": values.project_name,
-      "start_date": values.start_date,
-      "target_end_date": values.target_end_date,
-      "actual_end_date": values.actual_end_date,
-      "modified_on": date,
+      "start_date": moment(values.start_date),
+      "target_end_date": moment(values.target_end_date),
+      "actual_end_date": moment(values.actual_end_date),
+      "modified_on": moment(date),
       "modified_by": JSON.parse(localStorage.getItem("token")).person_name
     }).then(
       res => {

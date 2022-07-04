@@ -34,7 +34,6 @@ export default function Dashboard() {
                   key={issue.id}
                 >
                   <Link
-                    style={{ color: 'black' }}
                     to={'/home/issue/issueDetails'}
                     state={issue.id}>
                     <Tag color={issue.color}>{issue.id}</Tag>

@@ -4,6 +4,7 @@ import { Form, Input, Button, Modal, Table, DatePicker, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import { Link} from 'react-router-dom';
+import moment from 'moment';
 
 export default function Projects() {
   const [form] = Form.useForm();
@@ -153,12 +154,12 @@ export default function Projects() {
     var date = new Date();
     axios.post(`http://localhost:5000/it_projects`, {
       "project_name": values.project_name?values.project_name:"",
-      "start_date": values.start_date?values.project_name:"",
+      "start_date": values.start_date?moment(values.project_name):"",
       "target_end_date": "",
       "actual_end_date": "",
-      "created_on": date,
+      "created_on": moment(date),
       "created_by": JSON.parse(localStorage.getItem("token")).person_name,
-      "modified_on": date,
+      "modified_on": moment(date),
       "modified_by":  JSON.parse(localStorage.getItem("token")).person_name,
     }).then(
       res => {
