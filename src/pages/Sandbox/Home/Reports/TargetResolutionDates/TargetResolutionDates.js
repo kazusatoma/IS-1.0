@@ -20,7 +20,7 @@ export default function TargetResolutionDates() {
   const getListData = (value) => {
     let listData = [];
     myIssues.map((issue) => {
-      if ((moment(issue.target_resolution_date).month()) == value.month() && (moment(issue.target_resolution_date).date() == value.date()) && issue.target_resolution_date !== undefined) {
+      if ((moment(issue.target_resolution_date).month()) === value.month() && (moment(issue.target_resolution_date).date() === value.date()) && issue.target_resolution_date !== undefined) {
         listData = [...listData, issue]
       }
     })

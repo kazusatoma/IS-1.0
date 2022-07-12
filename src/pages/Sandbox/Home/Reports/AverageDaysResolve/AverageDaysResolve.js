@@ -5,18 +5,12 @@ import * as echarts from 'echarts'
 
 export default function AverageDaysResolve() {
 
-    const [myIssue, setIssues] = useState([]);
     const [myUsers, setUsers] = useState([]);
     // const [myUserData, setUserdata] = useState([]);
     // const [ResolveData, setResolvedata] = useState([]);
 
 
     useEffect(() => {
-        axios.get(" http://localhost:5000/it_issue").then(
-            res => {
-                setIssues(res.data)
-            }
-        )
         axios.get(`http://localhost:5000/it_people`).then(
             res => {
                 let temp = []

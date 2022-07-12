@@ -79,6 +79,11 @@ export default function IssueDetails() {
             "color": mycolor[0].color
         }).then(
             res => {
+                if (values.assigned_to !== "" && values.assigned_to !== myData[0].assigned_to) {
+                    axios.patch(`http://localhost:5000/it_people/${values.assigned_to}`, {
+                        "notification": true
+                    })
+                }
                 setData([res.data])
             }).catch(err => {
                 console.log(err)

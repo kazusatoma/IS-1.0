@@ -135,7 +135,7 @@ export default function Issues() {
       dataIndex: 'modified_on',
     },
     {
-      title: 'Assigned',
+      title: 'Assigned to',
       dataIndex: 'assigned_to',
       width: '10%',
       filters: [
@@ -149,15 +149,15 @@ export default function Issues() {
         }
       ],
       onFilter: (value, record) => {
-        if(value === "YES"){
+        if (value === "YES") {
           return !(record.assigned_to === "")
         }
-        else{
+        else {
           return record.assigned_to === ""
         }
       },
       render: (item) => {
-        return item === "" ? <Tag color="orange">NO</Tag> : <Tag color="blue">YES</Tag>
+        return item === "" ? <Tag color="orange">Not Assigned</Tag> : <Tag color="blue">{item}</Tag>
       }
     },
     {
@@ -225,29 +225,34 @@ export default function Issues() {
       return item.project === values.related_project
     })
     axios.post(`http://localhost:5000/it_issue`, {
-      "issue_summary": values.issue_summary?values.issue_summary:"",
-      "issue_description": values.issue_description?values.issue_description:"",
-      "identified_by_person_id": values.identified_by_person_id?values.identified_by_person_id:"",
-      "identified_date": values.identified_date?moment(values.identified_date):"",
-      "related_project": values.related_project?values.related_project:"",
-      "assigned_to": values.assigned_to?values.assigned_to:"",
+      "issue_summary": values.issue_summary ? values.issue_summary : "",
+      "issue_description": values.issue_description ? values.issue_description : "",
+      "identified_by_person_id": values.identified_by_person_id ? values.identified_by_person_id : "",
+      "identified_date": values.identified_date ? moment(values.identified_date) : "",
+      "related_project": values.related_project ? values.related_project : "",
+      "assigned_to": values.assigned_to ? values.assigned_to : "",
       "status": "OPEN",
-      "priority": values.priority?values.priority:"",
-      "target_resolution_date": values.target_resolution_date?moment(values.target_resolution_date):"",
-      "progress": values.progress?values.progress:"",
-      "actual_resolution_date": values.actual_resolution_date?moment(values.actual_resolution_date):"",
-      "resolution_summary": values.resolution_summary?values.resolution_summary:"",
+      "priority": values.priority ? values.priority : "",
+      "target_resolution_date": values.target_resolution_date ? moment(values.target_resolution_date) : "",
+      "progress": values.progress ? values.progress : "",
+      "actual_resolution_date": values.actual_resolution_date ? moment(values.actual_resolution_date) : "",
+      "resolution_summary": values.resolution_summary ? values.resolution_summary : "",
       "created_on": moment(date),
       "created_by": JSON.parse(localStorage.getItem("token")).person_name,
       "modified_on": moment(date),
       "modified_by": JSON.parse(localStorage.getItem("token")).person_name,
-      "color": mycolor[0].color?mycolor[0].color:"black"
+      "color": mycolor[0].color ? mycolor[0].color : "black"
     }).then(
       res => {
         setDatasource([...datasource, res.data])
       }).catch(err => {
         console.log(err)
       })
+    if (values.assigned_to !== "") {
+      axios.patch(`http://localhost:5000/it_people/${values.assigned_to}`, {
+        "notification": true
+      })
+    }
     setVisible(false);
   };
 

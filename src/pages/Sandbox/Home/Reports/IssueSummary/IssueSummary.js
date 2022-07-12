@@ -68,7 +68,7 @@ export default function IssueSummary() {
 
     const handleChange = (value) => {
         console.log(value)
-        if (value == "All") {
+        if (value === "All") {
             setCurrentProject(datasource)
         }
         else {
@@ -84,6 +84,7 @@ export default function IssueSummary() {
 
     return (
         <div>
+            <span style={{margin:15}}>project ID</span>
             <Select
                 style={{
                     width: 120,

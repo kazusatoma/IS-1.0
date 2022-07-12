@@ -1,6 +1,13 @@
 .Login_wrapper{
     background-color: rgb(35, 39, 65);
     height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.spinWrapper{
+    top: 50%;
+    left: -5%;
 }
 
 .loginTitle{

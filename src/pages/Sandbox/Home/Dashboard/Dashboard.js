@@ -14,6 +14,8 @@ export default function Dashboard() {
     axios.get(" http://localhost:5000/it_issue").then(
       res => {
         setIssues(res.data)
+        let date = new Date();
+        setCurrentTime(date)
       }
     )
   }, [])

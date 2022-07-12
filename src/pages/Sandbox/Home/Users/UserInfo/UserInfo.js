@@ -89,8 +89,8 @@ export default function ProjectDetails() {
     }
 
     const handleChange = (value) => {
-        setSelectingRole(value == "Manager")
-        if (value == "Manager") {
+        setSelectingRole(value === "Manager")
+        if (value === "Manager") {
             form.setFieldsValue({
                 assigned_project: "",
             })
